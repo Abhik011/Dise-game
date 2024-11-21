@@ -3,52 +3,26 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Guess the Dice Roll</title>
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-            text-align: center;
-            background-color: #f4f4f9;
-            margin: 0;
-            padding: 0;
-        }
-        .container {
-            margin-top: 50px;
-        }
-        .dice {
-            font-size: 50px;
-            margin: 10px;
-        }
-        .btn {
-            padding: 10px 20px;
-            background-color: #4CAF50;
-            color: white;
-            border: none;
-            cursor: pointer;
-            font-size: 18px;
-            border-radius: 5px;
-        }
-        .btn:hover {
-            background-color: #45a049;
-        }
-        .result {
-            font-size: 24px;
-            margin-top: 20px;
-            font-weight: bold;
-        }
-    </style>
+    <title>Dice Betting Game</title>
+    <link rel="stylesheet" href="style.css">
 </head>
 <body>
     <div class="container">
-        <h1>Guess the Dice Roll!</h1>
-        <p>Enter a sum between 2 and 12:</p>
-        <input type="number" id="guess" min="2" max="12" placeholder="Your guess (2-12)">
-        <button class="btn" onclick="playGame()">Roll Dice</button>
-
-        <div id="diceResult" class="dice"></div>
-        <div id="result" class="result"></div>
+        <h1>Dice Betting Game</h1>
+        <div class="timer">
+            <strong>Time left to bet: <span id="timer">50</span>s</strong>
+        </div>
+        <div class="dice-container">
+            <div id="die1" class="dice">🎲</div>
+            <div id="die2" class="dice">🎲</div>
+        </div>
+        <div id="result" class="result">Waiting for the result...</div>
+        <div id="guessButtons" class="guess-buttons"></div>
+        <h2>Result History</h2>
+        <div id="resultHistory" class="result-history"></div>
+        <h2>Your Guess History</h2>
+        <div id="guessHistory" class="guess-history"></div>
     </div>
-
     <script src="script.js"></script>
 </body>
 </html>
