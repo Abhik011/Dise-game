@@ -1,31 +1,107 @@
-// script.js
+let diceResult = null;
+let die1 = null;
+let die2 = null;
+let timer = 50;
+let interval = null;
+let historyQueue = [];
 
-function rollDice() {
-    const die1 = Math.floor(Math.random() * 6) + 1; // Random number between 1 and 6
-    const die2 = Math.floor(Math.random() * 6) + 1; // Random number between 1 and 6
-    return { die1, die2, sum: die1 + die2 };
+// Populate guess buttons dynamically
+window.onload = () => {
+    const guessButtons = document.getElementById("guessButtons");
+    for (let i = 2; i <= 12; i++) {
+        const button = document.createElement("button");
+        button.className = "btn";
+        button.innerText = i;
+        button.onclick = () => makeGuess(i);
+        button.disabled = true;
+        guessButtons.appendChild(button);
+    }
+    startNewRound();
+};
+
+// Start a new round
+function startNewRound() {
+    rollDice();
+    resetGuessButtons();
+    timer = 50;
+    document.getElementById("timer").innerText = timer;
+    startTimer();
+    historyQueue = [];
 }
 
-function playGame() {
-    // Get the user's guess
-    const userGuess = parseInt(document.getElementById("guess").value);
+// Simulate a dice roll
+function rollDice() {
+    die1 = Math.floor(Math.random() * 6) + 1;
+    die2 = Math.floor(Math.random() * 6) + 1;
+    diceResult = die1 + die2;
 
-    // Check if input is valid
-    if (!userGuess || userGuess < 2 || userGuess > 12) {
-        alert("Please enter a valid number between 2 and 12.");
-        return;
-    }
+    // Display dice result after 60 seconds
+    setTimeout(() => {
+        document.getElementById("die1").innerText = die1;
+        document.getElementById("die2").innerText = die2;
+        document.getElementById("result").innerText = `The dice sum was ${diceResult}!`;
 
-    // Roll the dice
-    const dice = rollDice();
+        updateResultHistory();
+        updateGuessHistory();
+    }, 60000);
+}
 
-    // Display the dice and the sum
-    document.getElementById("diceResult").innerHTML = `🎲 Dice: ${dice.die1} + ${dice.die2} = ${dice.sum}`;
+// Start the timer
+function startTimer() {
+    interval = setInterval(() => {
+        timer--;
+        document.getElementById("timer").innerText = timer;
 
-    // Check the result
-    const resultMessage =
-        dice.sum === userGuess
-            ? "🎉 Congratulations! You guessed it right!"
-            : "😢 Sorry, wrong guess. Try again!";
-    document.getElementById("result").innerHTML = resultMessage;
+        if (timer === 0) {
+            disableGuessButtons();
+        } else if (timer === -10) {
+            clearInterval(interval);
+            startNewRound();
+        }
+    }, 1000);
+}
+
+// Enable guess buttons
+function resetGuessButtons() {
+    document.querySelectorAll(".btn").forEach(button => (button.disabled = false));
+    document.getElementById("result").innerText = "Waiting for the result...";
+}
+
+// Disable guess buttons
+function disableGuessButtons() {
+    document.querySelectorAll(".btn").forEach(button => (button.disabled = true));
+}
+
+// Handle user guess
+function makeGuess(guess) {
+    historyQueue.push({ guess });
+    const historyItem = document.createElement("div");
+    historyItem.className = "history-item";
+    historyItem.innerText = `You guessed: ${guess} | Waiting for result...`;
+    document.getElementById("guessHistory").prepend(historyItem);
+}
+
+// Update history with dice results
+function updateGuessHistory() {
+    const guessHistory = document.getElementById("guessHistory");
+    historyQueue.forEach(item => {
+        const resultText =
+            item.guess === diceResult
+                ? `🎉 You guessed: ${item.guess} | Dice: ${die1} + ${die2} = ${diceResult} 🎉 Correct!`
+                : `😢 You guessed: ${item.guess} | Dice: ${die1} + ${die2} = ${diceResult} Wrong.`;
+        const historyItem = document.createElement("div");
+        historyItem.className = "history-item";
+        historyItem.innerText = resultText;
+        guessHistory.prepend(historyItem);
+    });
+    historyQueue = [];
+}
+
+// Add results to result history
+function updateResultHistory() {
+    const resultHistory = document.getElementById("resultHistory");
+    const historyItem = document.createElement("div");
+    historyItem.className = "history-item";
+    historyItem.innerText = `Dice: ${die1} + ${die2} = ${diceResult}`;
+    resultHistory.prepend(historyItem);
 }
